@@ -1,0 +1,3 @@
+ayaansohail69_db_user
+iVkouWaoOiLOuwPr
+mongodb+srv://<db_username>:<db_password>@glam-era.fynulfv.mongodb.net/?appName=Glam-Era
