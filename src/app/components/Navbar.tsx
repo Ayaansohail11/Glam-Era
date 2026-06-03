@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router";
-import { ShoppingBag, Heart, Search, User, Menu, X, ChevronDown } from "lucide-react";
+import { ShoppingBag, Heart, Search, User, Menu, X, ChevronDown, LogOut } from "lucide-react";
 import { useCart } from "../hooks/useCart";
+import { useAuth } from "../hooks/useAuth";
 
 const navLinks = [
   {
@@ -28,6 +29,7 @@ export function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { cartCount, wishlist } = useCart();
+  const { isLoggedIn, user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -123,9 +125,22 @@ export function Navbar() {
               )}
             </Link>
 
-            <Link to="/profile" className="hidden sm:flex p-2 hover:text-primary transition-colors rounded-full hover:bg-secondary">
-              <User size={20} />
-            </Link>
+            {isLoggedIn ? (
+              <div className="hidden sm:flex items-center gap-1">
+                <Link to="/profile" className="p-2 hover:text-primary transition-colors rounded-full hover:bg-secondary flex items-center gap-1.5">
+                  <div className="w-7 h-7 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-sm">
+                    {user?.name?.[0]?.toUpperCase()}
+                  </div>
+                </Link>
+                <button onClick={() => { logout(); navigate("/"); }} className="p-2 hover:text-primary transition-colors rounded-full hover:bg-secondary">
+                  <LogOut size={18} />
+                </button>
+              </div>
+            ) : (
+              <Link to="/auth" className="hidden sm:flex items-center gap-1.5 px-4 py-1.5 bg-primary text-white rounded-full text-sm font-semibold hover:bg-primary/90 transition-all">
+                <User size={15} /> Sign In
+              </Link>
+            )}
 
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -186,9 +201,14 @@ export function Navbar() {
                 )}
               </div>
             ))}
-            <Link to="/profile" className="block py-2 text-foreground hover:text-primary font-medium" onClick={() => setMobileOpen(false)}>
-              My Account
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <Link to="/profile" className="block py-2 text-foreground hover:text-primary font-medium" onClick={() => setMobileOpen(false)}>My Account</Link>
+                <button onClick={() => { logout(); navigate("/"); setMobileOpen(false); }} className="block py-2 text-foreground hover:text-primary font-medium text-left">Sign Out</button>
+              </>
+            ) : (
+              <Link to="/auth" className="block py-2 text-primary font-semibold" onClick={() => setMobileOpen(false)}>Sign In / Register</Link>
+            )}
           </div>
         )}
       </header>
